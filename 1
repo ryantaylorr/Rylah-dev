@@ -28,8 +28,6 @@ const rr = new ReactionRole(client, [
 
 const manager = new ReactionRole(client, configuration);
 
-let badBot = ["bot", "stupid",];
-
 client.on("messageCreate", message => {
 if (message.author.bot) return;
 
@@ -42,8 +40,7 @@ if (message.content.toLowerCase().includes('skynet')) {
 if (message.content.toLowerCase().includes('cum')) {
 	message.react('💦')
 }
- if ((message.content.includes("stupid") && message.content.includes("bot")) ||
-      (message.content.includes("bot") && message.content.includes("stupid"))) {
+if (message.content.toLowerCase().includes('bot','stupid')) {
 	message.react('🤖');
 	message.react('💻');
 	message.channel.send('WHAT');
@@ -67,4 +64,3 @@ client.once(Events.ClientReady, c => {
 });
 
 client.login(token);
- 
