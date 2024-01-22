@@ -1,5 +1,17 @@
 {
-	"token": "OTM5MjI5Njg3NTQ3MzA2MDE2.GRTUPn.wixTiQ7JNDS7jHSXmqQXEHlUf0UdULmqanz7ME",
-	"clientId": "1127073820705042522",
-	"guildId": "1156590488460218448"
+	"token": "OTM5MjI5Njg3NTQ3MzA2MDE2.GMNpnu.t_ka9BGl2FHfSa3_wmA67JgpI55kBgVaMLSFaY",
+	"clientId": "939229687547306016",
+	"guildId": "1156590488460218448",
+	"twitchClientId": "fjkxcpkbx2alv4duyyopb5rggiw7l8",
+	"twitchClientSecret": "cou27eahxiby91uqxcuy89j54mazs7",
+	"discordChannel": "1175108395779493908",	
+	"youtubeApiKey": "AIzaSyBHDgguOINHQ_5pg2_9cRnbzEryxfuaYOc",
+	"youtubeChannelId": "Chaotic_Gaming",
+	"botUsername": "themanymother",
+	"aToken": "oauth:cagu2d78j8sg3wdr9xuxjx1ikp1h88",
+	"channels": ["suddenlyari"],
+	"eveClientID": "4508067057984a5bbe4f6edd737e2d36",
+	"eveSecretKey": "hqUkaeNldkJcoPLnSQvHCBP4ZtIVRQQ8Xfedb26F"
+
 }
+
