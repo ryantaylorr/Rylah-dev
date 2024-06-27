@@ -88,106 +88,6 @@ const rr = new ReactionRole(client, [
   { messageId: "1198126554648158242", reaction: "☠️", roleId: "1198126888833515591" }  // Killmails 
 ]);
 
-const queueID = 'AriKillBot'; // Replace with your desired queueID
-const apiUrl = `https://redisq.zkillboard.com/listen.php?queueID=${queueID}&ttw=1`;
-const ISK_THRESHOLD = 10000; // 100 million ISK
-const YOUR_DISCORD_CHANNEL_ID = '1198127043309752442';
-
-
-async function getInfoById(type, id) {
-  try {
-    const response = await axios.get(`https://esi.evetech.net/latest/${type}/${id}/`);
-    return response.data.name;
-  } catch (error) {
-    
-    return null;
-  }
-}
-
-async function fetchKillmails() {
-  try {
-    const queueID = 'BotMeRylah'; // queueID
-    let apiUrl = `https://redisq.zkillboard.com/listen.php?queueID=${queueID}&ttw=1`; 
-    let shouldProcessKillmails = true;
-
-    while (shouldProcessKillmails) {
-      const response = await axios.get(apiUrl);
-      const killmail = response.data.package;
-
-      if (killmail !== null && killmail.killmail && killmail.killmail.victim) {
-       // console.log('Received Killmail:', killmail);
-
-        try {
-          const victim = killmail.killmail.victim;
-
-          // Fetching names based on IDs
-          const allianceName = await getInfoById('alliances', victim.alliance_id);
-          const corporationName = await getInfoById('corporations', victim.corporation_id);
-          const characterName = await getInfoById('characters', victim.character_id);
-          const shipTypeId = killmail.killmail.victim.ship_type_id;
-          const shipName = await getInfoById('universe/types', shipTypeId);
-          const solarSystemId = killmail.killmail.solar_system_id;
-          const solarSystemName = await getInfoById('universe/systems', solarSystemId);
-          const killID = killmail.killID;
-          const killmailLink = `https://www.zkillboard.com/kill/${killID}/`;
-
-         
-          // Check if total loss is over 100 million ISK
-          const iskValue = killmail.zkb.totalValue;
-          if (iskValue >= 5000000000) {
-            // Process and post to Discord
-          console.log(`BIG KILL FOUND: -> ISK value ${iskValue.toLocaleString()} ISK:`);
-          console.log(' ---------------------------------------------');
-          console.log('| Character Name:', characterName);
-          console.log('| Corporation Name:', corporationName);
-          console.log('| Alliance Name:', allianceName);
-          console.log('| Ship Name:', shipName);
-          console.log('| Solar System:', solarSystemName);
-          console.log(killmail);
-          console.log(' -----------------------------------------------');
-            // Create an embed for Discord
-            const embed = new EmbedBuilder()
-              .setColor(0x623878)
-              .setTitle('BIG KILL DETECTED:')
-              .setURL(killmailLink)
-              .addFields(
-                { name: 'Victim Name:', value: characterName || 'N/A' },
-                { name: 'Ship:', value: shipName || 'N/A' },
-                { name: 'Corporation:', value: corporationName || 'N/A' },
-                { name: 'Alliance:', value: allianceName || 'N/A' },
-                { name: 'System:', value: solarSystemName || 'N/A' },
-                { name: 'ISK Value:', value: `${iskValue.toLocaleString()} ISK` }
-              
-              )
-              .setThumbnail(`https://images.evetech.net/types/${shipTypeId}/icon`)
-              .setFooter({ text: 'R\'ylah ❤️', iconURL: 'https://images.evetech.net/characters/1563049248/portrait?size=128' });
-            // Replace 'YOUR_DISCORD_CHANNEL_ID' with the actual Discord channel ID
-            const channel = client.channels.cache.get(YOUR_DISCORD_CHANNEL_ID);
-
-            // Send the embed to Discord
-            channel.send({ embeds: [embed] });
-          } else {
-            // Log to console for killmails under 100 million ISK
-            console.log('---------------------------------------------------------------');
-            console.log(`| Killmail Found: ISK value ${iskValue.toLocaleString()} ISK: ..... ignoring.`); 
-            console.log('---------------------------------------------------------------')
-          }
-        } catch (error) {
-          
-        }} else {
-          console.log('No New Killmail... Still Checking...')
-        }
-      // Update the apiUrl with the latest kill ID
-      apiUrl = `https://redisq.zkillboard.com/listen.php?queueID=${queueID}&ttw=1&killID=${killmail?.killID || ''}`;
-    }
-  } catch (error) {
-    
-  }
-}
-
-
-// Start fetching killmails
-fetchKillmails();
 
  
     
@@ -197,10 +97,6 @@ client.on('ready', async () => {
     console.log('Bot Active.');
     client.user.setActivity('everything.', { type: ActivityType.Watching });
 
-    // Start the killmail listener
-    
-
-    // ... (existing code)
   } catch (error) {
     console.error('Error during initialization:', error.message);
   }
