@@ -5,22 +5,20 @@ const { readdirSync } = require('fs');
 const { Client, Events, GatewayIntentBits, Partials, ActivityType, Collection, EmbedBuilder } = require('discord.js');
 const { ReactionRole } = require("discordjs-reaction-role");
 const axios = require('axios');
-const querystring = require('querystring');
-const Redis = require('ioredis');
 
 
-
+////////////
 // CLIENT // 
-
+////////////
 const client = new Client({
   partials: [Partials.Message, Partials.Reaction],
   intents: [GatewayIntentBits.MessageContent, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.GuildVoiceStates],
 });
 
 
-// -------------------------------------------------------------------------------------------------------------------
-// ----------COMMAND HANDLING---------------------------------------------------------------------------------------
-
+//////////////////////
+// COMMAND HANDLING //
+//////////////////////
 client.commands = new Collection();
 
 const foldersPath = path.join(__dirname, 'commands');
@@ -33,13 +31,14 @@ for (const folder of commandFolders) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		// Set a new item in the Collection with the key as the command name and the value as the exported module
+    client.commands.set(command.data.name, command);
 		if ('data' in command && 'execute' in command) {
-			client.commands.set(command.data.name, command);
 		} else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
 }
+
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
@@ -62,44 +61,57 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
 	}
 });
+
+
 // -------------------------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------
 
 
+////////////////////
+// REACTION ROLES.//
+////////////////////
 
-// REACTION ROLES.
-
+const discordAirlockMessage = "1187213475223715971";
+const discordRoleMessage = "1264762803554619504";
 const rr = new ReactionRole(client, [
-  { messageId: "1187213475223715971", reaction: "👽", roleId: "1168919016895696986" }, // airlock
-  { messageId: "1198126554648158242", reaction: "🖼️", roleId: "1187094813183594555" }, // Art
-  { messageId: "1198126554648158242", reaction: "🧙🏻‍♀️", roleId: "1187085370798657578" }, // DnD
-  { messageId: "1198126554648158242", reaction: "🥑", roleId: "1187094602650484796" } , // Food
-  { messageId: "1198126554648158242", reaction: "📸", roleId: "1187085583642800208" } , // Going Live
-  { messageId: "1198126554648158242", reaction: "🪡", roleId: "1187085772902383646" }, // Ink
-  { messageId: "1198126554648158242", reaction: "⛏️", roleId: "1187085615116849233" }, // MC
-  { messageId: "1198126554648158242", reaction: "⚠️", roleId: "1187085821443051540" }, // NSFW Memes
-  { messageId: "1198126554648158242", reaction: "🎮", roleId: "1187101577220198550" }, // Gaming
-  { messageId: "1198126554648158242", reaction: "🔫", roleId: "1187085893895463033" }, // Guns
-  { messageId: "1198126554648158242", reaction: "🐱", roleId: "1187094842329800754" }, // Pets
-  { messageId: "1198126554648158242", reaction: "🪴", roleId: "1187085925168185434" }, // Sticky Green
-  { messageId: "1198126554648158242", reaction: "💻", roleId: "1187086089719119922" }, // Think Tank
-  { messageId: "1198126554648158242", reaction: "🚚", roleId: "1187086116269072467" }, // Trucking
-  { messageId: "1198126554648158242", reaction: "🐮", roleId: "1187086195767914558" }, // Cows
-  { messageId: "1198126554648158242", reaction: "☠️", roleId: "1198126888833515591" }  // Killmails 
+  { messageId: discordAirlockMessage, reaction: "👽", roleId: "1168919016895696986" }, // airlock
+  { messageId: discordRoleMessage, reaction: "🖼️", roleId: "1187094813183594555" }, // Art
+  { messageId: discordRoleMessage, reaction: "🧙🏻‍♀️", roleId: "1187085370798657578" }, // DnD
+  { messageId: discordRoleMessage, reaction: "🥑", roleId: "1187094602650484796" } , // Food
+  { messageId: discordRoleMessage, reaction: "📸", roleId: "1187085583642800208" } , // Going Live
+  { messageId: discordRoleMessage, reaction: "🪡", roleId: "1187085772902383646" }, // Ink
+  { messageId: discordRoleMessage, reaction: "⛏️", roleId: "1187085615116849233" }, // MC
+  { messageId: discordRoleMessage, reaction: "⚠️", roleId: "1187085821443051540" }, // NSFW Memes
+  { messageId: discordRoleMessage, reaction: "🎮", roleId: "1187101577220198550" }, // Gaming
+  { messageId: discordRoleMessage, reaction: "🔫", roleId: "1187085893895463033" }, // Guns
+  { messageId: discordRoleMessage, reaction: "🐱", roleId: "1187094842329800754" }, // Pets
+  { messageId: discordRoleMessage, reaction: "🪴", roleId: "1187085925168185434" }, // Sticky Green
+  { messageId: discordRoleMessage, reaction: "💻", roleId: "1187086089719119922" }, // Think Tank
+  { messageId: discordRoleMessage, reaction: "🚚", roleId: "1187086116269072467" }, // Trucking
+  { messageId: discordRoleMessage, reaction: "🐮", roleId: "1187086195767914558" }, // Cows
+  { messageId: discordRoleMessage, reaction: "🤖", roleId: "1264394283356782662" }, // Overseer
+  { messageId: discordRoleMessage, reaction: "🛰️", roleId: "1264394075172241430" }, // Radarr
+  { messageId: discordRoleMessage, reaction: "📡", roleId: "1264394127223685245" }, // Sonarr
+  { messageId: discordRoleMessage, reaction: "🖥️", roleId: "1264394173344383077" }, // Systems
 ]);
 
 
- 
-    
-// Log In / Set Status / Initiate Reaction Roles
-client.on('ready', async () => {
-  try {
-    console.log('Bot Active.');
-    client.user.setActivity('everything.', { type: ActivityType.Watching });
 
-  } catch (error) {
-    console.error('Error during initialization:', error.message);
-  }
-});
+
+//////////////////////////////////////////////////
+// Log In / Set Status / Initiate Reaction Roles//
+//////////////////////////////////////////////////
+client.once('ready', async () => {
+    console.log('Bot Active.');
+    client.user.setPresence({
+    status: 'dnd',
+    activities: [{
+      type: ActivityType.Watching,
+      name: '👽 The Void.',
+    }]
+  })
+}); 
+ 
+
 
 client.login(token);
